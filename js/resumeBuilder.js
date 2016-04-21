@@ -1,3 +1,5 @@
+"use strict";
+
 // build bio JSON object
 var bio = {
 	"name" : "James Parkes",
@@ -29,40 +31,32 @@ var bio = {
 * @description Displays bio information from JSON object to resume
 */
 bio.display = function() {
+	// display name and role
 	var formattedRole = HTMLheaderRole.replace("%data%", bio.role);
-	$("#header").prepend(formattedRole);
 	var formattedName = HTMLheaderName.replace("%data%", bio.name);
-	$("#header").prepend(formattedName);
+	$("#header").prepend(formattedName, formattedRole);
 
+	// display contact information (top and bottom)
 	var formattedMobile = HTMLmobile.replace("%data%", bio.contacts.mobile);
-	$("#topContacts").append(formattedMobile);
-	$("#footerContacts").append(formattedMobile);
 	var formattedEmail = HTMLemail.replace("%data%", bio.contacts.email);
-	$("#topContacts").append(formattedEmail);
-	$("#footerContacts").append(formattedEmail);
 	var formattedTwitter = HTMLtwitter.replace("%data%", bio.contacts.twitter);
-	$("#topContacts").append(formattedTwitter);
-	$("#footerContacts").append(formattedTwitter);
 	var formattedGitHub = HTMLgithub.replace("%data%", bio.contacts.github);
-	$("#topContacts").append(formattedGitHub);
-	$("#footerContacts").append(formattedGitHub);
 	var formattedLocation = HTMLlocation.replace("%data%", bio.contacts.location);
-	$("#topContacts").append(formattedLocation);
-	$("#footerContacts").append(formattedLocation);
+	$("#topContacts").append(formattedMobile, formattedEmail, formattedTwitter, formattedGitHub, formattedLocation);
+	$("#footerContacts").append(formattedMobile, formattedEmail, formattedTwitter, formattedGitHub, formattedLocation);
 
+	// display bio picture and welcome message
 	var formattedBioPic = HTMLbioPic.replace("%data%", bio.biopic);
-	$("#header").append(formattedBioPic);
 	var formattedwelcomeMsg = HTMLwelcomeMsg.replace("%data%", bio.welcomeMessage);
-	$("#header").append(formattedwelcomeMsg);
+	$("#header").append(formattedBioPic, formattedwelcomeMsg);
 
+	// display skills
 	$("#header").append(HTMLskillsStart);
-
-	for(skill in bio.skills) {
-		var formattedSkill = HTMLskills.replace("%data%", bio.skills[skill]);
-
+	bio.skills.forEach(function(val) {
+		var formattedSkill = HTMLskills.replace("%data%", val);
 		$("#skills:last").append(formattedSkill);
-	}
-}
+	});
+};
 
 // build education JSON object
 var education = {
@@ -125,40 +119,41 @@ var education = {
 			"url" : "http://udacity.com/course/ud245"
 		}
 	]
-}
+};
 
 /**
 * @description Displays education information from JSON object to resume
 */
 education.display = function() {
-	for(school in education.schools) {
+	// display formal education
+	education.schools.forEach(function(val) {
 		$("#education").append(HTMLschoolStart);
+		var formattedName = HTMLschoolName.replace("%data%", val.name);
+		var formattedNameWithURL = formattedName.replace("#", val.url);
+		var formattedDegree = HTMLschoolDegree.replace("%data%", val.degree);
+		var formattedDates = HTMLschoolDates.replace("%data%", val.location);
+		var formattedLocation = HTMLschoolLocation.replace("%data%", val.dates);
+		
+		/* TO DO! - LOOP THIS */
+		var formattedMajor = HTMLschoolMajor.replace("%data%", val.majors);
+		/* TO DO! - LOOP THIS */
 
-		var formattedName = HTMLschoolName.replace("%data%", education.schools[school].name);
-		var formattedNameWithURL = formattedName.replace("#", education.schools[school].url);
-		var formattedDegree = HTMLschoolDegree.replace("%data%", education.schools[school].degree);
-		var formattedDates = HTMLschoolDates.replace("%data%", education.schools[school].location);		
-		var formattedLocation = HTMLschoolLocation.replace("%data%", education.schools[school].dates);
-		var formattedMajor = HTMLschoolMajor.replace("%data%", education.schools[school].majors);
 		var formattedSchool = formattedNameWithURL + formattedDegree + formattedDates + formattedLocation + formattedMajor;
-
 		$(".education-entry:last").append(formattedSchool);
-	}
+	});
 
+	// display informal education
 	$("#education").append(HTMLonlineClasses);
-
-	for(course in education.onlineCourses) {
+	education.onlineCourses.forEach(function(val) {
 		$("#education").append(HTMLschoolStart);
-
-		var formattedTitle = HTMLonlineTitle.replace("%data%", education.onlineCourses[course].title);
-		var formattedSchool = HTMLonlineSchool.replace("%data%", education.onlineCourses[course].school);
-		var formattedDates = HTMLonlineDates.replace("%data%", education.onlineCourses[course].date);		
-		var formattedTitleWithURL = formattedTitle.replace("#", education.onlineCourses[course].url);
+		var formattedTitle = HTMLonlineTitle.replace("%data%", val.title);
+		var formattedSchool = HTMLonlineSchool.replace("%data%", val.school);
+		var formattedDates = HTMLonlineDates.replace("%data%", val.date);		
+		var formattedTitleWithURL = formattedTitle.replace("#", val.url);
 		var formattedCourse = formattedTitleWithURL + formattedSchool + formattedDates;
-
 		$(".education-entry:last").append(formattedCourse);
-	}
-}
+	});
+};
 
 // build work JSON object
 var work = {
@@ -192,29 +187,28 @@ var work = {
 			"description" : "Administered Pardot marketing automation system, served as project lead for new website initiative, and trained global team members to use Pardot and Sitecore"		
 		}		
 	]
-}
+};
 
 /**
 * @description Displays work information from JSON object to resume
 */
 work.display = function() {
-	for(job in work.jobs) {
+	// display work experience
+	work.jobs.forEach(function(val) {
 		$("#workExperience").append(HTMLworkStart);
-
-		var formattedEmployer = HTMLworkEmployer.replace("%data%", work.jobs[job].employer);
-		var formattedTitle = HTMLworkTitle.replace("%data%", work.jobs[job].title);
-		var formattedLocation = HTMLworkLocation.replace("%data%", work.jobs[job].location);		
-		var formattedDates = HTMLworkDates.replace("%data%", work.jobs[job].dates);
-		var formattedDescription = HTMLworkDescription.replace("%data%", work.jobs[job].description);
+		var formattedEmployer = HTMLworkEmployer.replace("%data%", val.employer);
+		var formattedTitle = HTMLworkTitle.replace("%data%", val.title);
+		var formattedLocation = HTMLworkLocation.replace("%data%", val.location);
+		var formattedDates = HTMLworkDates.replace("%data%", val.dates);
+		var formattedDescription = HTMLworkDescription.replace("%data%", val.description);
 		var formattedJob = formattedEmployer + formattedTitle + formattedDates + formattedLocation + formattedDescription;
-
 		$(".work-entry:last").append(formattedJob);
-	}
-}
+	});
+};
 
 // build projects JSON object
 var projects = {
-	"activities" : [
+	"projects" : [
 		{
 			"title" : "Chimi",
 			"years" : "Aug 2013 - Dec 2013",
@@ -234,33 +228,33 @@ var projects = {
 			"image" : "images/es-logo.png"
 		}
 	]
-}
+};
 
 /**
 * @description Displays project information from JSON object to resume
 */
 projects.display = function() {
-	for(activity in projects.activities) {
+	// display projects
+	projects.projects.forEach(function(val) {
 		$("#projects").append(HTMLprojectStart);
-
-		var formattedTitle = HTMLprojectTitle.replace("%data%", projects.activities[activity].title);
-		var formattedDates = HTMLprojectDates.replace("%data%", projects.activities[activity].years);
-		var formattedDescription = HTMLprojectDescription.replace("%data%", projects.activities[activity].description);
-		var formattedImage = HTMLprojectImage.replace("%data%", projects.activities[activity].image);
+		var formattedTitle = HTMLprojectTitle.replace("%data%", val.title);
+		var formattedDates = HTMLprojectDates.replace("%data%", val.years);
+		var formattedDescription = HTMLprojectDescription.replace("%data%", val.description);
+		var formattedImage = HTMLprojectImage.replace("%data%", val.image);
 		var formattedProject = formattedImage + formattedTitle + formattedDates + formattedDescription;
-
 		$(".project-entry:last").append(formattedProject);
-	}
-}
+	});
+};
 
-var map = {}
+var map = {};
 
 /**
 * @description Displays resume information from JSON object to resume
 */
 map.display = function() {
+	// display map
 	$("#mapDiv").append(googleMap);
-}
+};
 
 bio.display();
 education.display();
